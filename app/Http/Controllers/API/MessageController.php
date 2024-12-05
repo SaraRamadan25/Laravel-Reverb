@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\API;
 
-use App\Events\MessageSent;
+use App\Events\MessageReceived;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -15,12 +15,12 @@ class MessageController extends Controller
      */
     public function sendMessage(Request $request)
     {
-        $request->validate([
-            'message' => 'required|string',
+        $message = $request->input('message');
+
+        event(new MessageReceived($message));
+
+        return response()->json([
+            'status' => 'Message sent and broadcasted'
         ]);
-
-        event(new MessageSent($request->message));
-
-        return response()->json(['status' => 'Message sent and broadcasted']);
     }
 }
